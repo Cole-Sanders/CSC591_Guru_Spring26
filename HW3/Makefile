@@ -1,9 +1,12 @@
 DATA = page_blocks_dirty.csv
 SHELL := /bin/bash
+MAKEFLAGS += --no-print-directory
 GIT_ROOT := $(shell git rev-parse --show-toplevel 2>/dev/null)
 HERE := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
+.DEFAULT_GOAL := help
+HOME_DIR := $(subst \,/,$(USERPROFILE))
 
-all: out/S1 out/S2 out/S3 out/S4 out/S5 \
+all: out/S1 out/S2 ##out/S3 out/S4 out/S5 \
      out/A out/B out/C out/D out/E out/F \
      out/G out/H out/I out/J out/K out/L out/M
 
@@ -36,13 +39,14 @@ sh: banner ## run my shell
 push: ## save to cloud
 	@read -p "Reason? " msg; git commit -am "$$msg"; git push; git status
 
-~/tmp/%.html: %.py ~/tmp Makefile
-	mkdir -p ~/tmp
-	pycco -d ~/tmp $<
-	echo 'p {text-align: right}' >> ~/tmp/pycco.css
+$(HOME_DIR)/tmp/%.html: %.py Makefile | $(HOME_DIR)/tmp
+	@printf "\033[36mGenerating: $@\033[0m\n"
+	mkdir -p $(HOME_DIR)/tmp
+	pycco -d $(HOME_DIR)/tmp $<
+	@echo 'p {text-align: right}' >> $(HOME_DIR)/tmp/pycco.css
 
-~/tmp:
-	mkdir -p ~/tmp
+$(HOME_DIR)/tmp:
+	mkdir -p $(HOME_DIR)/tmp
 
 # ── Part 1: gawk ─────────────────────────────────
 out/S1: $(DATA); mkdir -p out; gawk -f S1.awk $< > $@
