@@ -1,7 +1,7 @@
 BEGIN { FS="," }
-{
+
     NR > 1 { seen[$0]++; if (seen[$0] == 2) dup_key[++ndup] = $0 }
-}
+
 END {
      print "\n=== S5: Duplicate rows ==="
     total_dup = 0

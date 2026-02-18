@@ -6,8 +6,8 @@ HERE := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 .DEFAULT_GOAL := help
 HOME_DIR := $(subst \,/,$(USERPROFILE))
 
-all: out/S1 out/S2 ##out/S3 out/S4 out/S5 \
-     out/A out/B out/C out/D out/E out/F \
+all: out/S1 out/S2 out/S3 out/S4 out/S5 \
+    ## out/A out/B out/C out/D out/E out/F \
      out/G out/H out/I out/J out/K out/L out/M
 
 # ── Support ──────────────────────────────────────

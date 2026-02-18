@@ -1,7 +1,7 @@
 BEGIN { FS="," }
-{
+
     NR > 1 && $13 !~ /^[1-5]$/ { bad_class[NR] = $13 }
-}
+
 END {
      print "\n=== S4: Bad class labels ==="
     n = 0
