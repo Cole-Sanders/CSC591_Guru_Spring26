@@ -34,13 +34,13 @@ def check_A(cols, data):
         groups[k] = groups.get(k, []) + [c]
     [print(", ".join(g)) for g in groups.values() if len(g) > 1]
 
-def is_num(lst):
-    # Helper to check if a list is entirely numeric
-    return all(isinstance(x, (int, float)) for x in lst)
+def is_num(x):
+    # Helper to check if a single value is numeric
+    return isinstance(x, (int, float))
 
 def check_B(cols, data):
     # Only compare columns that are fully numeric
-    nums = [c for c in cols if is_num(data[c])]
+    nums = [c for c in cols if all(is_num(x) for x in data[c])]
     for i, c1 in enumerate(nums):
         for c2 in nums[i+1:]:
             if abs(pearson(data[c1], data[c2])) > 0.95:
@@ -115,8 +115,7 @@ def check_E(cols, data):
     check(['class!'],
           lambda i: not num(v('class!', i)) or v('class!', i) not in {1, 2, 3, 4, 5})
 
-    check(['BLACKPIX', 'BLACKAND'],
-          lambda i: not (num(v('BLACKPIX', i)) and num(v('BLACKAND', i))) or v('BLACKPIX', i) > v('BLACKAND', i))
+
 def get_row_indices(data):
     return range(len(next(iter(data.values()))))
 
@@ -200,8 +199,7 @@ def check_K(cols, data):
         elif any(not is_num(v[c]) or not (0 <= v[c] <= 1) for c in ['P_BLACK', 'P_AND']): implausible.add(i+1)
         # Class range
         elif v['class!'] not in {1, 2, 3, 4, 5}: implausible.add(i+1)
-        # Logical: BLACKPIX must be >= BLACKAND
-        elif is_num(v['BLACKPIX']) and is_num(v['BLACKAND']) and v['BLACKPIX'] < v['BLACKAND']: implausible.add(i+1)
+
     return implausible
 
 def check_L(cols, data):
@@ -216,9 +214,14 @@ def main():
     if len(sys.argv) < 3: return
     mode, filename = sys.argv[1], sys.argv[2]
     cols, data = get_data(filename)
-    dispatch = {'A': check_A, 'B': check_B, 'C': check_C, 'D': check_D, 'E': check_E,'G': check_G, 'H': check_H, 'I': check_I, 'J': check_J, 'K': check_K, 'L': check_L, 'M': check_M}
-    if mode in dispatch:
+    dispatch = {'A': check_A, 'B': check_B, 'C': check_C, 'D': check_D, 'E': check_E, 'G': check_G, 'H': check_H, 'I': check_I, 'J': check_J, 'K': check_K, 'L': check_L, 'M': check_M}
+    prints = {'A', 'B', 'C', 'D', 'E'}
+    if mode in prints:
         dispatch[mode](cols, data)
+    elif mode in dispatch:
+        result = dispatch[mode](cols, data)
+        for row in sorted(result):
+            print(row)
 
 if __name__ == "__main__":
     main()
