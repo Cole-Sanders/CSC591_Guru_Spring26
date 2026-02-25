@@ -55,20 +55,20 @@ out/S3: $(DATA); mkdir -p out; gawk -f S3.awk $< > $@
 out/S4: $(DATA); mkdir -p out; gawk -f S4.awk $< > $@
 out/S5: $(DATA); mkdir -p out; gawk -f S5.awk $< > $@
 
-# ── Part 2: python ────────────────────────────────
-out/A: $(DATA);         mkdir -p out; python checks.py A $< > $@
-out/B: $(DATA);         mkdir -p out; python checks.py B $< > $@
-out/C: $(DATA);         mkdir -p out; python checks.py C $< > $@
-out/D: $(DATA);         mkdir -p out; python checks.py D $< > $@
-out/E: $(DATA);         mkdir -p out; python checks.py E $< > $@
+# ── Part 2: python3 ────────────────────────────────
+out/A: $(DATA);         mkdir -p out; python3 checks.py A $< > $@
+out/B: $(DATA);         mkdir -p out; python3 checks.py B $< > $@
+out/C: $(DATA);         mkdir -p out; python3 checks.py C $< > $@
+out/D: $(DATA);         mkdir -p out; python3 checks.py D $< > $@
+out/E: $(DATA);         mkdir -p out; python3 checks.py E $< > $@
 out/F: out/A out/B out/C out/D out/E
 	tail -n+2 $^ | grep -vE '^$$|^==>' | sort -u > $@
 
-out/G: $(DATA);         mkdir -p out; python checks.py G $< > $@
-out/H: $(DATA);         mkdir -p out; python checks.py H $< > $@
-out/I: $(DATA);         mkdir -p out; python checks.py I $< > $@
-out/J: $(DATA);         mkdir -p out; python checks.py J $< > $@
-out/K: $(DATA);         mkdir -p out; python checks.py K $< > $@
+out/G: $(DATA);         mkdir -p out; python3 checks.py G $< > $@
+out/H: $(DATA);         mkdir -p out; python3 checks.py H $< > $@
+out/I: $(DATA);         mkdir -p out; python3 checks.py I $< > $@
+out/J: $(DATA);         mkdir -p out; python3 checks.py J $< > $@
+out/K: $(DATA);         mkdir -p out; python3 checks.py K $< > $@
 out/L: out/G out/H out/I out/J out/K
 	tail -n+2 $^ | grep -vE '^$$|^==>' | sort -un > $@
 out/M: out/G out/H out/I out/J out/K
