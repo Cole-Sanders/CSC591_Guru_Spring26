@@ -12,7 +12,7 @@ You just need this main.lua:
 local machine = require"fsm3"
 
 -- === DSL Helpers === --
--- Clumsy idom fix #1
+-- Q0:say
 local function say(msg)
   return function(p)
     local formatted = msg:gsub("{hp}", tostring(p.hp))
@@ -20,7 +20,7 @@ local function say(msg)
   end
 end
 
--- Clumsy idom fix #2: Global transitions that apply to all states, with ability to override
+-- Q0:trans
 local global_trans = { hit = "staggered", die = "dead" }
 local function trans(specifics)
   local t = {}
@@ -29,7 +29,7 @@ local function trans(specifics)
   return t
 end
 
--- Clumsy idom fix #3: Action helpers for common patterns
+-- Q0:helpers
 local function take_damage(p)
   local dmg = table.remove(p.damage_queue, 1) or 0
   p.hp = p.hp - dmg
@@ -40,7 +40,7 @@ local function inject(p, event)
   table.insert(p.queue, 1, event)
 end
 
--- Trace Printer Helper
+-- Q1:trace
 local function print_trace(p)
   print("\n=== FSM EXECUTION TRACE ===")
   if not p.trace or #p.trace == 0 then
@@ -52,7 +52,7 @@ local function print_trace(p)
   end
 end
 
---Linter
+-- Q2:lint
 local function lint(rules, initial)
   print("=== RUNNING LINTER ===")
   local reachable = { [initial] = true }
@@ -176,3 +176,7 @@ print("Final Queue Size remaining: " .. #final_memory.queue)
 print("Final HP: " .. final_memory.hp)
 
 print_trace(final_memory)
+
+-- Q5:dot
+local to_dot = require "to_dot"
+print(to_dot(rpg_rules, "idle"))
