@@ -103,7 +103,18 @@ end
 local rpg_rules = {
   idle = {
     action = say("is idling. HP: {hp}"),
-    transitions = trans({ walk = "moving", attack = "attacking" })
+    transitions = trans({
+      walk = "moving",
+      -- Guard: only enter attacking if stamina is sufficient, otherwise stay idle
+      attack = function(p)
+        if p.stamina > 10 then
+          return "attacking"
+        else
+          print(string.format("   > [%s] is too exhausted to attack! (stamina: %d)", p.name, p.stamina))
+          return "idle"
+        end
+      end
+    })
   },
   
   moving = {
@@ -112,7 +123,10 @@ local rpg_rules = {
   },
   
   attacking = {
-    action = say("swings their weapon!"),
+    action = function(p)
+      p.stamina = p.stamina - 12  -- each swing costs stamina
+      print(string.format("   [%s] swings their weapon! (stamina now: %d)", p.name, p.stamina))
+    end,
     transitions = trans({ recover = "idle" })
   },
   
@@ -140,10 +154,13 @@ local rpg_rules = {
 local my_payload = {
   name = "Hero",
   hp = 100,
+  stamina = 30,   -- enough for ~2 attacks before guard triggers
   queue = { 
-    "walk", "attack", "recover", 
+    "walk", "attack", "recover",   -- attack 1: stamina 30 -> 18, passes guard
     "hit", "recover", 
-    "walk", "attack", 
+    "walk", "attack",              -- attack 2: stamina 18 -> 6, passes guard
+    "recover",
+    "attack",                      -- attack 3: stamina 6, BLOCKED by guard
     "hit", "walk" 
   },
   damage_queue = { 15, 90 } 
