@@ -6,10 +6,11 @@ local function run(rules, s, p)
   local e = table.remove(p.queue, 1)
   if not e then return p end
   
-  -- Determine the next state
-  local next_s = rules[s].transitions[e] or s
+  -- Q3:guard
+  local raw = rules[s].transitions[e]
+  local next_s = (type(raw) == "function" and raw(p) or raw) or s -- Q4:wildcard
   
-  -- Record the transition to our history trace before the tail call
+  -- Q1:append
   table.insert(p.trace, string.format("[%s] %s -> %s", e, s, next_s))
   
   -- Tail Call Optimization is preserved because this is the final return
